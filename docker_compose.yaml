@@ -1,0 +1,42 @@
+#Single file that run all the docker images
+version: '3'
+services:
+  # Node.js Express API service
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile1
+    ports:
+      - "[suitable port]:[same port]"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: [Database port, may be 1433]
+      DB_USER: [username]
+      DB_PASSWORD: [database password]
+      DB_DATABASE: [database name]
+    networks:
+      - my-network
+
+  angularapp:
+    image: nginx:alpine
+    volumes:
+      - ./dist/angularapp:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "[suitable port]:[same port]"
+    networks:
+      - my-network
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: yourStrong(!)Password
+      ACCEPT_EULA: Y
+      MSSQL_PID: Developer
+    ports:
+      - "[suitable port]:[same port]"
+    networks:
+      - my-network
+
+

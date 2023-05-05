@@ -1,0 +1,43 @@
+Copy code
+name: Build and publish each components' docker images
+on:
+  push:
+    branches:
+      - main
+env:
+  REGISTRY_USERNAME: ${{ your registry's username saved on secrets }}
+  REGISTRY_PASSWORD: ${{ your registry's password saved on secrets }}
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v2
+      
+	# (1)
+      - name: Build and publish express.js, node.js, API docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./api 
+          push: true
+          tags: [your registry where the image is stored]/api:latest
+          build-args: |
+            NODE_VERSION=[your node.js version]
+            APP_ENV=production
+      
+	# (2)
+      - name: Build and publish single page angular application docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./spa
+          push: true
+          tags: [your registry where the image is stored]/spa:latest
+      
+	# (3)
+      - name: Build and publish SQL Server Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./db
+          push: true
+          tags: [your registry where the image is stored]/db:latest
+	# db, api , spa are directories containig dockerfiles for building the docker image

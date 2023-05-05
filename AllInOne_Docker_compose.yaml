@@ -1,0 +1,48 @@
+#if we make seprate docker compose file for deploying each component:
+#for type script application ,make new docker compose file(1):
+version: '3'
+services:
+  api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+#Then run following commands: 
+#docker-compose build
+#docker-compose up
+
+#Same for remaining two components, make new docker compose file write the following code and run the commands mentioned above
+#For angular spa(2)
+version: '3'
+services:
+  nodeApi:
+    build: ./api
+    ports:
+      - "[suitable port]:[same port]"
+    environment:
+      NODE_ENV: production
+  angularApp:
+    build: ./app
+    ports:
+      - "[suitable port]:[same port]"
+    depends_on:
+      - api
+#For sql server(3)
+version: '3'
+services:
+  api:
+    build: ./api
+    ports:
+      - "[suitable port]:[same port]"
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - db
+  db:
+    build: ./db
+    ports:
+      - "[suitable port]:[same port]"
+    environment:
+      SA_PASSWORD:[your password]
+      ACCEPT_EULA: Y

@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+WORKDIR /app
+COPY . .
+#I searched in internet and got to know sql script needs permission
+RUN chmod +x ./setup.sql 
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=[your password]
+CMD /bin/bash -c "./setup.sql & /opt/mssql/bin/sqlservr"
